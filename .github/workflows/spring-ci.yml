@@ -1,0 +1,31 @@
+  name: Spring Docker Build & Push
+  on:
+    push:
+      branches: [ main ]
+  jobs:
+    build-and-push:
+      runs-on: ubuntu-latest
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Mvn Package
+        run: mvn clean package
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build Docker image
+        run: docker build -t xxx0209/spring-backend:latest .
+      - name: Push Docker image
+        run: docker push xxx0209/spring-backend:latest
+
+        # ================================================
+        # VM1 내부에서 deploy_spring.sh 실행
+#      - name: Deploy to VM1
+#        uses: appleboy/ssh-action@v0.1.6
+#        with:
+#          host: ${{ secrets.VM1_HOST }}       # VM1 IP
+#          username: ${{ secrets.VM1_USER }}   # SSH 사용자
+#          key: ${{ secrets.VM1_SSH_KEY }}     # SSH 키
+#          script: |
+#            cd ~
+#            chmod +x deploy_spring.sh
+#            ./deploy_spring.sh
